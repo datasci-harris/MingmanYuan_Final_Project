@@ -145,7 +145,7 @@ def derivedColumns(statedata):
                                           'total_move_from_abroad'], axis=1)
         # Since we only extract one year data, meaning the length of statedata is 1.
         # Therefore we could store statedata[i] by statedata directly.
-        return statedata
+    return statedata
 
 
 statedata = derivedColumns(statedata)
