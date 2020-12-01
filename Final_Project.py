@@ -60,7 +60,7 @@ def getTechIndex2018(filename):
 getTechIndex2018('State Technology and Sciencxe Index Y2018.csv')
 
 
-def download2017Census(table, year, geo, vars):
+def download2017Census(vars):
     # Dowload Year 2017 data from American Community Census website throught the official API
     # Since the H1b filings disclosed in Year2018 contains
     # Call this function while downloading Censusdata
@@ -131,11 +131,11 @@ def derivedColumns(statedata):
             statedata[i].iloc[:, 0]+statedata[i].iloc[:, 1])/statedata[i]['total_move_from_abroad']*100
         # Drop features that we no long need
         statedata = statedata[i].drop(['move_from_abroad_Graduate_professional_degree_population_size',
-                           'move_from_abroad_Bachelor_degree_population_size',
-                           'move_from_abroad_college_associate_degree_population_size',
-                           'move_from_abroad_high_school_degree_population_size',
-                           'move_from_abroad_less_than_high_school_degree_population_size',
-                           'total_move_from_abroad'], axis=1)
+                                       'move_from_abroad_Bachelor_degree_population_size',
+                                       'move_from_abroad_college_associate_degree_population_size',
+                                       'move_from_abroad_high_school_degree_population_size',
+                                       'move_from_abroad_less_than_high_school_degree_population_size',
+                                       'total_move_from_abroad'], axis=1)
         # Since we only extract one year data, meaning the length of statedata is 1.
         # Therefore we could store statedata[i] by statedata directly.
         return statedata
