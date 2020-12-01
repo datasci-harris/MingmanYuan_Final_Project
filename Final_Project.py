@@ -27,6 +27,7 @@ def getH1B(file_name):
     for link in soup.findAll('a'):
         if file_name in link.text:
             file_link = base + link.get('href')
+    global path
     getFile(file_link, file_name, path)
 
 
@@ -49,10 +50,11 @@ def getTechIndex2018(filename):
         for value in values:
             # store each element in the set columns in the new list output_row
             state_index_set.append(value.text)
-            state_index.append(state_index_set)
-        with open(os.path.join(path, filename), 'w') as csvfile:
-            writer = csv.writer(csvfile)
-            writer.writerows(state_index)
+        state_index.append(state_index_set)
+    global path
+    with open(os.path.join(path, filename), 'w') as csvfile:
+        writer = csv.writer(csvfile)
+        writer.writerows(state_index)
 
 
 getTechIndex2018('State Technology and Sciencxe Index Y2018.csv')
@@ -128,7 +130,7 @@ def derivedColumns(statedata):
         statedata[i]['percent_move_from_abroad_above_college_degree'] = (
             statedata[i].iloc[:, 0]+statedata[i].iloc[:, 1])/statedata[i]['total_move_from_abroad']*100
         # Drop features that we no long need
-        statedata[i].drop(['move_from_abroad_Graduate_professional_degree_population_size',
+        statedata = statedata[i].drop(['move_from_abroad_Graduate_professional_degree_population_size',
                            'move_from_abroad_Bachelor_degree_population_size',
                            'move_from_abroad_college_associate_degree_population_size',
                            'move_from_abroad_high_school_degree_population_size',
@@ -136,7 +138,6 @@ def derivedColumns(statedata):
                            'total_move_from_abroad'], axis=1)
         # Since we only extract one year data, meaning the length of statedata is 1.
         # Therefore we could store statedata[i] by statedata directly.
-        statedata = statedata[i]
         return statedata
 
 
