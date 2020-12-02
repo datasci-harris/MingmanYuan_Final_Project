@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 import urllib.request as urllib2
 import requests
 import censusdata
+import geopandas
 
 
 path = os.getcwd()
@@ -126,6 +127,75 @@ getTechIndex(['State Technology and Sciencxe Index Y2018.csv',
 
 StateTech18 = pd.read_csv('State Technology and Sciencxe Index Y2018.csv')
 StateTech16 = pd.read_csv('State Technology and Sciencxe Index Y2016.csv')
+
+
+def cleanStateTech(StateTechDT):
+    # Cite the dictionary from 'https://gist.github.com/rogerallen/1583593'
+    # Call this function to transform the state names to state abbreviations for later merge
+    us_state_abbrev = {
+        'Alabama': 'AL',
+        'Alaska': 'AK',
+        'American Samoa': 'AS',
+        'Arizona': 'AZ',
+        'Arkansas': 'AR',
+        'California': 'CA',
+        'Colorado': 'CO',
+        'Connecticut': 'CT',
+        'Delaware': 'DE',
+        'District of Columbia': 'DC',
+        'Florida': 'FL',
+        'Georgia': 'GA',
+        'Guam': 'GU',
+        'Hawaii': 'HI',
+        'Idaho': 'ID',
+        'Illinois': 'IL',
+        'Indiana': 'IN',
+        'Iowa': 'IA',
+        'Kansas': 'KS',
+        'Kentucky': 'KY',
+        'Louisiana': 'LA',
+        'Maine': 'ME',
+        'Maryland': 'MD',
+        'Massachusetts': 'MA',
+        'Michigan': 'MI',
+        'Minnesota': 'MN',
+        'Mississippi': 'MS',
+        'Missouri': 'MO',
+        'Montana': 'MT',
+        'Nebraska': 'NE',
+        'Nevada': 'NV',
+        'New Hampshire': 'NH',
+        'New Jersey': 'NJ',
+        'New Mexico': 'NM',
+        'New York': 'NY',
+        'North Carolina': 'NC',
+        'North Dakota': 'ND',
+        'Northern Mariana Islands': 'MP',
+        'Ohio': 'OH',
+        'Oklahoma': 'OK',
+        'Oregon': 'OR',
+        'Pennsylvania': 'PA',
+        'Puerto Rico': 'PR',
+        'Rhode Island': 'RI',
+        'South Carolina': 'SC',
+        'South Dakota': 'SD',
+        'Tennessee': 'TN',
+        'Texas': 'TX',
+        'Utah': 'UT',
+        'Vermont': 'VT',
+        'Virgin Islands': 'VI',
+        'Virginia': 'VA',
+        'Washington': 'WA',
+        'West Virginia': 'WV',
+        'Wisconsin': 'WI',
+        'Wyoming': 'WY'
+    }
+    StateTechDT['abbrev'] = StateTechDT.State.replace(us_state_abbrev)
+    return StateTechDT
+
+
+StateTech18 = cleanStateTech(StateTech18)
+StateTech16 = cleanStateTech(StateTech18)
 
 
 def downloadCensus(vars):
