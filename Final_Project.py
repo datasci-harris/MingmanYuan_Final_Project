@@ -3,6 +3,9 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import csv
+import zipfile
+import io
+import json
 from bs4 import BeautifulSoup
 import urllib.request as urllib2
 import requests
@@ -375,6 +378,26 @@ Merge16 = mergeAll(StateH1B16, StateTech16, StateCensus15, StateLoc)
 
 Merge16.to_csv('H1B Prediction Clean Data Year2016.csv', index=False)
 Merge18.to_csv('H1B Prediction Clean Data Year2018.csv', index=False)
+
+
+def readZippedFile(url):
+    # Call this function to download the USA States Choropleth data from 'https://www.census.gov/geographies/mapping-files/time-series/geo/carto-boundary-file.html'
+    # To read zip file, cite 'https://medium.com/@loldja/reading-shapefile-zips-from-a-url-in-python-3-93ea8d727856'
+    r = requests.get(url)
+    z = zipfile.ZipFile(io.BytesIO(r.content))
+    global path
+    z.extractall(path=path)
+    filenames = [y for y in sorted(z.namelist())
+                 for ending in ['dbf', 'prj', 'shp', 'shx'] if y.endswith(ending)]
+    dbf, prj, shp, shx = [filename for filename in filenames]
+    usa = geopandas.read_file(shp)
+    return usa
+
+
+StateGeo = readZippedFile('https://www2.census.gov/geo/tiger/GENZ2018/shp/cb_2018_us_state_5m.zip')
+
+
+downloadShapeFile('US States Choropleth')
 
 
 def plotMerge(Merge):
