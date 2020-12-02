@@ -6,13 +6,11 @@ import matplotlib.pyplot as plt
 import csv
 import zipfile
 import io
-import json
 from bs4 import BeautifulSoup
 import urllib.request as urllib2
 import requests
 import censusdata
 import geopandas
-import descartes
 
 
 path = os.getcwd()
@@ -408,6 +406,7 @@ def plotMerge(Merge18, StateGeo):
     gMerge18['H1B_Case_Number_Percent'] = gMerge18['H1B_Case_Number'] / \
         sum(gMerge18['H1B_Case_Number'])
     # Spacial join two geopandas geoDataFrame as we want one as the base layer and another as the second layor
+    gMerge18.crs = StateGeo.crs
     sjoin_test = geopandas.sjoin(StateGeo, gMerge18, how='left')
     # Cite Prof Levy's code in class to do the plot
     fig, ax = plt.subplots(figsize=(30, 20))
@@ -420,9 +419,11 @@ def plotMerge(Merge18, StateGeo):
                                              'United States Virgin Islands',
                                              'Alaska',
                                              'Hawaii',
-                                             'Puerto Rico']) is False].plot(ax=ax, column='H1B_Case_Number_Percent', legend=True, cax=cax)
+                                             'Puerto Rico']) == False].plot(ax=ax, column='H1B_Case_Number_Percent', legend=True, cax=cax)
     ax.axis('off')
     ax.set_title('Share of H1B filings')
+    global path
+    fig.savefig(path + '/H1B Filings Share Plot.png')
 
 
 plotMerge(Merge18, StateGeo)
