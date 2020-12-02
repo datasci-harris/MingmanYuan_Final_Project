@@ -60,8 +60,36 @@ getH1B('H1B FY2016.xlsx')
 # H1b2016_sub.to_csv('H-1B FY2016 Sub.csv', index=False)
 
 
-StateH1B18 = pd.read_csv('H-1B FY2018 Sub.csv')
-StateH1B16 = pd.read_csv('H-1B FY2016 Sub.csv')
+def loadStateH1B(filename):
+    # filename 'H-1B FY2018 Sub.csv' and 'H-1B FY2016 Sub.csv'
+    H1BDT = pd.read_csv(filename)
+    H1BDT = H1BDT.dropna(axis=0, how='any')
+    H1BDT['year'] = filename[7:11]
+    H1BDT['Annual_Prevailing_Wage'] = 0
+    H1BDT['Annual_Prevailing_Wage'] = np.where(H1BDT['PW_UNIT_OF_PAY'] == 'Year',
+                                               H1BDT['PREVAILING_WAGE'], H1BDT['Annual_Prevailing_Wage'])
+    H1BDT['Annual_Prevailing_Wage'] = np.where(H1BDT['PW_UNIT_OF_PAY'] == 'Hour', H1BDT['PREVAILING_WAGE']*2080,
+                                               H1BDT['Annual_Prevailing_Wage'])
+    H1BDT['Annual_Prevailing_Wage'] = np.where(H1BDT['PW_UNIT_OF_PAY'] == 'Week',
+                                               H1BDT['PREVAILING_WAGE']*52, H1BDT['Annual_Prevailing_Wage'])
+    H1BDT['Annual_Prevailing_Wage'] = np.where(H1BDT['PW_UNIT_OF_PAY'] == 'Month',
+                                               H1BDT['PREVAILING_WAGE']*12, H1BDT['Annual_Prevailing_Wage'])
+    H1BDT['Annual_Prevailing_Wage'] = np.where(H1BDT['PW_UNIT_OF_PAY'] == 'Bi-Weekly',
+                                               H1BDT['PREVAILING_WAGE']*26, H1BDT['Annual_Prevailing_Wage'])
+
+    H1BDT_agg1 = H1BDT.groupby(['WORKSITE_STATE']).agg(
+        {'Annual_Prevailing_Wage': 'mean', 'CASE_NUMBER': 'count'})
+    H1BDT_agg2 = H1BDT.groupby(['EMPLOYER_STATE']).agg({'EMPLOYER_STATE': 'count'})
+    H1BDT_agg = H1BDT_agg1.merge(H1BDT_agg2, how='inner', left_on=[
+                                 'WORKSITE_STATE'], right_on=H1BDT_agg2.index)
+    H1BDT_agg = H1BDT_agg.rename(columns={'WORKSITE_STATE': 'StateAbb',
+                                          'Annual_Prevailing_Wage': 'Avg_Annual_Prevailing_Wage',
+                                          'EMPLOYER_STATE': 'Employer_Number'})
+    return H1BDT_agg
+
+
+StateH1B18 = loadStateH1B('H-1B FY2018 Sub.csv')
+StateH1B16 = loadStateH1B('H-1B FY2016 Sub.csv')
 
 
 def getTechIndex(filename):
