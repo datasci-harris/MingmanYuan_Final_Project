@@ -12,6 +12,10 @@ import requests
 import censusdata
 import geopandas
 import sklearn.preprocessing as preprocessing
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.linear_model import LinearRegression
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.svm import SVR
 
 
 path = os.getcwd()
@@ -474,3 +478,20 @@ Y_train = pd.DataFrame()
 Y_test = pd.DataFrame()
 
 splitMerge(Merge18, Merge16)
+
+
+def model(models):
+    score = []
+    for name, model in models:
+        regr = model()
+        regr.fit(X_train, Y_train)
+        score.append(f'The score of {name} is {round(regr.score(X_test, Y_test)*100, 2)}')
+    return score
+
+
+models = [('Linear Regression', LinearRegression),
+          ('Decision Tree', DecisionTreeRegressor),
+          ('Random Forest', RandomForestRegressor),
+          ('Support Vector RegressionVR', SVR)]
+
+print(model(models))
