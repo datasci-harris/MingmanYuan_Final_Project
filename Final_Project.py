@@ -125,8 +125,17 @@ getTechIndex(['State Technology and Sciencxe Index Y2018.csv',
               'State Technology and Sciencxe Index Y2016.csv'])
 
 
+def cleanStateTech16(StateTech16):
+    # Call this function to clean the whitespace in all cells of the feature State
+    # I did not define this function at first and until I got an error when I call the function mergeAll, one
+    # lesson here is always check and clean your data after the download
+    StateTech16['State'] = StateTech16['State'].str.strip()
+    return StateTech16
+
+
 StateTech18 = pd.read_csv('State Technology and Sciencxe Index Y2018.csv')
 StateTech16 = pd.read_csv('State Technology and Sciencxe Index Y2016.csv')
+StateTech16 = cleanStateTech16(StateTech16)
 
 
 def cleanStateTech(StateDT):
@@ -337,19 +346,20 @@ StateLoc = loadStateLoc('State Location.csv')
 
 
 def mergeAll(StateH1B_agg, StateTech, StateCensus, StateLoc):
+    # Call this function to merge four seperate clean data tables for each year together - the State Cencus data,
+    # the State Tech and Science Index data, the State Location data and the State H1B data.
     H1BMergeIndex = StateH1B_agg.merge(StateTech, how='inner', left_on=[
                                        'StateAbb'], right_on=['abbrev'])
     H1BMergeIndex = H1BMergeIndex.drop(['abbrev'], axis=1)
     H1BMergeCencus = H1BMergeIndex.merge(StateCensus, how='inner', left_on=[
                                          'StateAbb'], right_on=['abbrev'])
-    H1BMergeLoc = H1BMergeCencus.erge(StateLoc, how='inner', left_on=[
-                                      'StateAbb'], right_on=['stateabb'])
-    Merge = H1BMergeLoc.drop(['StateAbb', 'Rank', 'State_y',
+    H1BMergeLoc = H1BMergeCencus.merge(StateLoc, how='inner', left_on=[
+        'StateAbb'], right_on=['stateabb'])
+    Merge = H1BMergeLoc.drop(['Rank', 'State_y',
                               'abbrev', 'stateabb', 'State_x'], axis=1)
     Merge = Merge.rename(columns={'Avg_Annual_Prevailing_Wage': 'H1B_Average_Wage',
                                   'CASE_NUMBER': 'H1B_Case_Number',
                                   'Employer_Number': 'H1B_Employer_Number',
-                                  'StateName': 'StateAbb',
                                   'statename': 'State',
                                   'Score': 'TechSciScore'})
     Merge = Merge[['State', 'StateAbb',
@@ -358,3 +368,14 @@ def mergeAll(StateH1B_agg, StateTech, StateCensus, StateLoc):
                    'H1B_Case_Number',
                    'latitude', 'longitude']]
     return Merge
+
+
+Merge18 = mergeAll(StateH1B18, StateTech18, StateCensus17, StateLoc)
+Merge16 = mergeAll(StateH1B16, StateTech16, StateCensus15, StateLoc)
+
+Merge16.to_csv('H1B Prediction Clean Data Year2016.csv', index=False)
+Merge18.to_csv('H1B Prediction Clean Data Year2018.csv', index=False)
+
+
+def plotMerge(Merge):
+    #
