@@ -129,7 +129,7 @@ StateTech18 = pd.read_csv('State Technology and Sciencxe Index Y2018.csv')
 StateTech16 = pd.read_csv('State Technology and Sciencxe Index Y2016.csv')
 
 
-def cleanStateTech(StateTechDT):
+def cleanStateTech(StateDT):
     # Cite the dictionary from 'https://gist.github.com/rogerallen/1583593'
     # Call this function to transform the state names to state abbreviations for later merge
     us_state_abbrev = {
@@ -190,8 +190,8 @@ def cleanStateTech(StateTechDT):
         'Wisconsin': 'WI',
         'Wyoming': 'WY'
     }
-    StateTechDT['abbrev'] = StateTechDT.State.replace(us_state_abbrev)
-    return StateTechDT
+    StateDT['abbrev'] = StateDT.State.replace(us_state_abbrev)
+    return StateDT
 
 
 StateTech18 = cleanStateTech(StateTech18)
@@ -274,6 +274,7 @@ def derivedColumns(statedata):
                                           'move_from_abroad_high_school_degree_population_size',
                                           'move_from_abroad_less_than_high_school_degree_population_size',
                                           'total_move_from_abroad'], axis=1)
+        statedata[i] = statedata[i].rename(columns={'state': 'State'})
         # Since we only extract one year data, meaning the length of statedata is 1.
         # Therefore we could store statedata[i] by statedata directly.
     return statedata
@@ -288,6 +289,8 @@ def storeStateCensus(statedata, filename):
 storeStateCensus(statedata, ['2017_Census_State_data.csv', '2015_Census_State_data.csv'])
 StateCensus17 = pd.read_csv('2017_Census_State_data.csv')
 StateCensus15 = pd.read_csv('2015_Census_State_data.csv')
+StateCensus17 = cleanStateTech(StateCensus17)
+StateCensus15 = cleanStateTech(StateCensus15)
 # statedata = derivedColumns(statedata)
 # statedata[0].to_csv('2017_Census_State_data.csv', index=False)
 # statedata[1].to_csv('2015_Census_State_data.csv', index=False)
@@ -331,3 +334,27 @@ def loadStateLoc(filename):
 
 
 StateLoc = loadStateLoc('State Location.csv')
+
+
+def mergeAll(StateH1B_agg, StateTech, StateCensus, StateLoc):
+    H1BMergeIndex = StateH1B_agg.merge(StateTech, how='inner', left_on=[
+                                       'StateAbb'], right_on=['abbrev'])
+    H1BMergeIndex = H1BMergeIndex.drop(['abbrev'], axis=1)
+    H1BMergeCencus = H1BMergeIndex.merge(StateCensus, how='inner', left_on=[
+                                         'StateAbb'], right_on=['abbrev'])
+    H1BMergeLoc = H1BMergeCencus.erge(StateLoc, how='inner', left_on=[
+                                      'StateAbb'], right_on=['stateabb'])
+    Merge = H1BMergeLoc.drop(['StateAbb', 'Rank', 'State_y',
+                              'abbrev', 'stateabb', 'State_x'], axis=1)
+    Merge = Merge.rename(columns={'Avg_Annual_Prevailing_Wage': 'H1B_Average_Wage',
+                                  'CASE_NUMBER': 'H1B_Case_Number',
+                                  'Employer_Number': 'H1B_Employer_Number',
+                                  'StateName': 'StateAbb',
+                                  'statename': 'State',
+                                  'Score': 'TechSciScore'})
+    Merge = Merge[['State', 'StateAbb',
+                   'H1B_Employer_Number', 'H1B_Average_Wage',
+                   'TechSciScore', 'percent_move_from_abroad_above_college_degree',
+                   'H1B_Case_Number',
+                   'latitude', 'longitude']]
+    return Merge
