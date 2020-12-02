@@ -11,6 +11,7 @@ import urllib.request as urllib2
 import requests
 import censusdata
 import geopandas
+import sklearn.preprocessing as preprocessing
 
 
 path = os.getcwd()
@@ -427,3 +428,49 @@ def plotMerge(Merge18, StateGeo):
 
 
 plotMerge(Merge18, StateGeo)
+
+
+def scaleMerge(Merge1, Merge2, scale_lst):
+    Merge = []
+    Merge1 = Merge1.set_index(['State'])
+    Merge1 = Merge1.drop(['StateAbb', 'latitude', 'longitude', 'geometry'], axis=1)
+    Merge1['H1B_Case_Number_Percent'] = Merge1['H1B_Case_Number'] / sum(Merge1['H1B_Case_Number'])
+    Merge2 = Merge2.set_index(['State'])
+    Merge2 = Merge2.drop(['StateAbb', 'latitude', 'longitude'], axis=1)
+    Merge2['H1B_Case_Number_Percent'] = Merge2['H1B_Case_Number'] / sum(Merge2['H1B_Case_Number'])
+    sc_scale = preprocessing.StandardScaler().fit(Merge1[scale_lst])
+    Merge1[scale_lst] = sc_scale.transform(Merge1[scale_lst])
+    sc_scale = preprocessing.StandardScaler().fit(Merge2[scale_lst])
+    Merge2[scale_lst] = sc_scale.transform(Merge2[scale_lst])
+    Merge.append(Merge1)
+    Merge.append(Merge2)
+    return Merge
+
+
+scale_lst = ['H1B_Average_Wage',
+             'TechSciScore',
+             'percent_move_from_abroad_above_college_degree',
+             'H1B_Employer_Number']
+
+Merge = scaleMerge(Merge18, Merge16, scale_lst)
+Merge18 = Merge[0]
+Merge16 = Merge[1]
+
+
+def splitMerge(Merge1, Merge2):
+    global X_train
+    global Y_train
+    global X_test
+    global Y_test
+    X_train = Merge1.drop(['H1B_Case_Number_Percent'], axis=1)
+    Y_train = Merge1['H1B_Case_Number_Percent']
+    X_test = Merge2.drop(['H1B_Case_Number_Percent'], axis=1)
+    Y_test = Merge2['H1B_Case_Number_Percent']
+
+
+X_train = pd.DataFrame()
+X_test = pd.DataFrame()
+Y_train = pd.DataFrame()
+Y_test = pd.DataFrame()
+
+splitMerge(Merge18, Merge16)
