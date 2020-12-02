@@ -1,3 +1,4 @@
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 import os
 import pandas as pd
 import numpy as np
@@ -11,6 +12,7 @@ import urllib.request as urllib2
 import requests
 import censusdata
 import geopandas
+import descartes
 
 
 path = os.getcwd()
@@ -397,8 +399,30 @@ def readZippedFile(url):
 StateGeo = readZippedFile('https://www2.census.gov/geo/tiger/GENZ2018/shp/cb_2018_us_state_5m.zip')
 
 
-downloadShapeFile('US States Choropleth')
+def plotMerge(Merge18, StateGeo):
+    # Call this function to plot color code each US State's H1B filings on US map for year2018
+    # First change the normal dataframe Merge18 to geodataframe
+    gMerge18 = geopandas.GeoDataFrame(Merge18, geometry=geopandas.points_from_xy(
+        Merge18['longitude'], Merge18['latitude']))
+    # Create a new column called 'H1B_Case_Number_Percent'
+    gMerge18['H1B_Case_Number_Percent'] = gMerge18['H1B_Case_Number'] / \
+        sum(gMerge18['H1B_Case_Number'])
+    # Spacial join two geopandas geoDataFrame as we want one as the base layer and another as the second layor
+    sjoin_test = geopandas.sjoin(StateGeo, gMerge18, how='left')
+    # Cite Prof Levy's code in class to do the plot
+    fig, ax = plt.subplots(figsize=(30, 20))
+    divider = make_axes_locatable(ax)
+    cax = divider.append_axes('right', size='5%', pad=0.1)
+    ax = sjoin_test[sjoin_test['NAME'].isin(['Aemrican Samoa',
+                                             'Commonwealth of the Northern Mariana Islands',
+                                             'District of Columbia',
+                                             'Guam',
+                                             'United States Virgin Islands',
+                                             'Alaska',
+                                             'Hawaii',
+                                             'Puerto Rico']) is False].plot(ax=ax, column='H1B_Case_Number_Percent', legend=True, cax=cax)
+    ax.axis('off')
+    ax.set_title('Share of H1B filings')
 
 
-def plotMerge(Merge):
-    #
+plotMerge(Merge18, StateGeo)
