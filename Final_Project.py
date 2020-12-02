@@ -444,8 +444,6 @@ def scaleMerge(Merge1, Merge2, scale_lst):
     Merge2['H1B_Case_Number_Percent'] = Merge2['H1B_Case_Number'] / sum(Merge2['H1B_Case_Number'])
     sc_scale = preprocessing.StandardScaler().fit(Merge1[scale_lst])
     Merge1[scale_lst] = sc_scale.transform(Merge1[scale_lst])
-    sc_scale = preprocessing.StandardScaler().fit(Merge2[scale_lst])
-    Merge2[scale_lst] = sc_scale.transform(Merge2[scale_lst])
     Merge.append(Merge1)
     Merge.append(Merge2)
     return Merge
