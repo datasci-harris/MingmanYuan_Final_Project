@@ -64,27 +64,118 @@ https://www.census.gov/geographies/mapping-files/time-series/geo/carto-boundary-
 
 #### Variables
 
-This dataset is pandas Geo dataframe. And
+This dataset is Geopandas Geodataframe. And two most important vairbales used later to merge two Geodataframes (via geopandas.sjoin) is State name(STUSPS) and Geometry.
 
 ### State Longitude and Latitude Data
 
-To add the second layer in my spacial data plot, I need to first add longitude and latitude for each state, combine them as geo points and then 
+To add the second layer in my spacial data plot, the longitude and latitude for each state is required. Therefore I built a web scraper via Beautiful Soup, and parsed the HTML to pick out the tables provided by google development that contains the geographic information of each state.
 
 #### Data Soucre
 
+For detailed information of this dataset, refer to: 
+https://developers.google.com/public-data/docs/canonical/states_csv
+
 #### Variables
+
+The structure of this data is also clean - only contains the longtitude and latitude of each state.
 
 ## Final Clean Datasets
 
+After merging H1B data, STSI data and ACS data by the key State Abbreviation, there are two final clean datasets - one for year 2016 and one for year 2018. Later I would use data for year 2016 as the training set, and data for 2018 as the tesing set.
+
 ## Self-defined Funcions
 
-## Data Pre-processing
+This session lists all the functions that I defined in this project, and gives brief introduction of the parameters and expected output of each function.
 
-## Modeling
+### Data Acquiring
 
-### Modeling result
+#### getFile(url, filename, path)
 
-### 
+Call this function within the function getH1B(file_name).
+
+#### getH1B(file_name)
+
+Call this function to download H1B data by url and save the file 'file_name' in the repo.
+
+#### subH1B(dt)
+
+Call this function to subset the original downloaded H1B data, aimed to keep variables that relevant to this project and shrink the data file size.
+
+#### loadStateH1B(filename)
+
+Call this function to read H1B subset data, rename the column name and do some aggregated calculation on case-level data. The output is a new dataframe based on state level.
+
+#### getTechIndex(filename)
+
+Call this function to dowload the STSI data on state level by parsing HTML, and save the file 'filename' in the repo.
+
+#### downloadCensus(vars)
+
+Dowload ACS data from American Community Census website throught the official API, and only extracted variables 'vars' from the whole official dataset.
+
+#### storeStateCensus(statedata, filename)
+
+Call this function to store the clean state census data 'statedata'as the file 'filename' in the repo.
+
+#### getStatesLoc(filename)
+
+Call this function to download the latitude and longitude of each US state, and save a csv file named 'filename' in the repo.
+
+#### loadStateLoc(filename)
+
+Call this function to read the State Locatoion.csv file into a clean dataframe
+
+#### readZippedFile(url)
+
+Call this function to download the USA States Choropleth data from 'url', unzip the zipped file, read .shp file and return a dataframe contains State geographic information.
+
+### Data Pre-processing
+
+#### cleanStateTech16(StateTech16)
+
+Call this function to clean the whitespace in all cells of the feature State.
+
+#### cleanStateTech(StateDT)
+
+Call this function to transform the state names to state abbreviations for later merge.
+
+#### cleanCensus(statedata)
+
+Call this function to convert the original state name format to plain text.
+
+#### resetCensus(statedata, reset_ls)
+
+Call this function to rename each column in data 'statedate' by iterating the new column name list 'reset_ls'.
+
+#### derivedColumns(statedata)
+
+Call this function to creat new features based on existing features
+
+### Plotting
+ 
+#### mergeAll(StateH1B_agg, StateTech, StateCensus, StateLoc)
+
+Call this function to merge four seperate clean data tables for each year together - the State Cencus data, the State Tech and Science Index data, the State Location data and the State H1B data.
+
+#### plotMerge(Merge18, StateGeo)
+
+Call this function to plot color code each US State's H1B filings on US map for year2018.
+
+### Modeling
+
+#### scaleMerge(Merge1, Merge2, scale_lst)
+
+Call this funtion to rename columns names in two datasets Merge1 and Merge2, and conduct standarization on Merge2, the training data set for better modeling.
+
+#### splitMerge(Merge1, Merge2)
+
+Call this function to define the training and test datasets.
+
+#### model(models)
+
+Use four different algorithms to do modeling, and return the accuracy score to quantify the prediction quality.
+
+## Modeling result
 
 
 
