@@ -172,9 +172,19 @@ Call this function to define the training and test datasets.
 
 #### model(models)
 
-Use four different algorithms to do modeling, and return the accuracy score to quantify the prediction quality.
+Use four different algorithms to do modeling, and return the explained variance score to quantify the prediction quality.
 
-## Modeling result
+## Modeling Result and Limitation
+
+According to the plot, we could tell that California and Texas has way more H1B cases that other states, and there is high relevancy between the state tech score and the number of  H1B cases. However, the modeling results are not good as expected - the score of Linear Regression is just above 0.53 whereas the score for either Decision tree or Random Forest is below 0, meaning the features in models are not able to give a good explanation of the results. The potebtial reasons could be other basic features, for example, the GDP of each state and the median household income are missing in the model, and the correlations between features are not tested in this project.
+
+## Future Prospects
+
+This project has a lot of room for improvent. For example, I only leveraged the static H1B data, but there could be some more interesting findings once we use the H1B data in multiple years, observing the trend of H1B applications trend of each state. Also during the ETA procresss, job titles could be better leveraged to see the top 5 job titles that are having highest growth in applications and etc. At last, to improve the model results, some new features are supposed to be included, for example, the GDP of each state, the median household income of each state, the number of students graduating from STEM programs of each state and etc.
+
+
+
+
 
 
 
