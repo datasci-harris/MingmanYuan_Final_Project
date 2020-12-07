@@ -50,23 +50,23 @@ getH1B('H1B FY2016.xlsx')
 # relevant columns that I would use later in the feature engineering and modeling process. And I apply this on H1B Y2016
 # data as well.
 
-# H1b2018 = pd.read_excel('H-1B FY2018.xlsx')
-# H1b2016 = pd.read_excel('H1B FY2016.xlsx')
+H1b2018 = pd.read_excel('H-1B FY2018.xlsx')
+H1b2016 = pd.read_excel('H1B FY2016.xlsx')
 
 
-# def subH1B(dt):
-#     dt = dt.loc[dt['CASE_STATUS'] == 'CERTIFIED'].filter(['CASE_NUMBER', 'EMPLOYER_NAME',
-#                                                           'EMPLOYER_STATE', 'JOB_TITLE', 'SOC_CODE',
-#                                                           'PREVAILING_WAGE', 'PW_UNIT_OF_PAY',
-#                                                           'WORKSITE_STATE'], axis=1)
-#     return dt
+def subH1B(dt):
+    dt = dt.loc[dt['CASE_STATUS'] == 'CERTIFIED'].filter(['CASE_NUMBER', 'EMPLOYER_NAME',
+                                                          'EMPLOYER_STATE', 'JOB_TITLE', 'SOC_CODE',
+                                                          'PREVAILING_WAGE', 'PW_UNIT_OF_PAY',
+                                                          'WORKSITE_STATE'], axis=1)
+    return dt
 
 
-# H1b2018_sub = subH1B(H1b2018)
-# H1b2018_sub.to_csv('H-1B FY2018 Sub.csv', index=False)
+H1b2018_sub = subH1B(H1b2018)
+H1b2018_sub.to_csv('H-1B FY2018 Sub.csv', index=False)
 
-# H1b2016_sub = subH1B(H1b2016)
-# H1b2016_sub.to_csv('H-1B FY2016 Sub.csv', index=False)
+H1b2016_sub = subH1B(H1b2016)
+H1b2016_sub.to_csv('H-1B FY2016 Sub.csv', index=False)
 
 
 def loadStateH1B(filename):
