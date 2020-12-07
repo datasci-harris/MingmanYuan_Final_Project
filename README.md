@@ -2,8 +2,7 @@
 
 ## Project Overview
 
-This project is aimed to
-
+This project performs basic explortary analysis on H1B visa cases in year 2016 and 2018, and try to build a model to predict the number of H1B visa cases in one year in the future. 
 
 ## About H1-B
 
@@ -15,7 +14,7 @@ The H1B is an employment-based, non-immigrant visa category for temporary foreig
 
 Annual data provided by the office of foreign labor of the US Department of labor. This disclosure data consists of selected information extracted from nonimmigrant and immigrant application tables within the Office of Foreign Labor Certification's case management systems. The data sets are available in the Microsoft Excel (.xlsx) file format and organized by the federal fiscal year (October 1 through September 30). I dowloaded the H1B disclosure data of 2016 and 2018 by using their respective urls, and save them as excel files in the repo.
 
-Note that the original downloaded H1B dataset for one year is around 250 MB, containing more than 65000+ rows. Though I've saved them as excel files in repo, it is quite time consuming to read the excel file. For grading convenience, I save the subset dataset for each year as another two csv files (decreasing the file size to MB) - only contain variables used later, and read them direcly. To avoid repetition, I commented out the data download code, but feel free to run the download code and read the original files if you want!
+Note that the original downloaded H1B dataset for one year is around 250 MB, containing more than 65000+ rows. Though I've saved them as excel files in repo, it is quite time consuming to read the excel file, and I was unable to push these two files to github(without using Github LFS). For grading convenience, I save the subset dataset for each year as another two csv files (decreasing the file size to MB) - only contain variables used later. Therefore I would recommend reading the subset data files direcly once it takes long time to read the original H1B file on your computer. To do this, please comment out the data downloading code, download the 'H-1B FY2018 Sub.csv' and 'H-1B FY2016 Sub.csv', and then run codes in line100 and line 101.
 
 #### Data Source
 
@@ -81,7 +80,7 @@ The structure of this data is also clean - only contains the longtitude and lati
 
 ## Final Clean Datasets
 
-After merging H1B data, STSI data and ACS data by the key State Abbreviation, there are two final clean datasets - one for year 2016 and one for year 2018. Later I would use data for year 2016 as the training set, and data for 2018 as the tesing set.
+After merging H1B data, STSI data and ACS data by the key State Abbreviation, there are two final clean datasets - one for year 2016 and one for year 2018. Later I would use data for year 2016 as the training set, and data for 2018 as the tesing set. These two datasets have the exactly same strucutre, and the primary key of each is the state name. Each dataset has 50 rows (50 states) and six columns (H1B_Employer_Number, H1B_Average_Wage, TechSciScore, percent_move_from_abroad_above_college_degree, H1B_Case_Number and H1B_Case_Number_Percent). The last variable will be the target variable in the modeling part, and the first five variables are features.
 
 ## Self-defined Funcions
 
@@ -176,6 +175,8 @@ Call this function to define the training and test datasets.
 Use four different algorithms to do modeling, and return the accuracy score to quantify the prediction quality.
 
 ## Modeling result
+
+
 
 
 
