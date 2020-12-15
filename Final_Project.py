@@ -17,6 +17,12 @@ from sklearn.linear_model import LinearRegression
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.svm import SVR
 
+"""
+General grading comments:
+- Do not capitalize the first letters of variable names, or use mixed case for function names; use namings according to PEP8
+- You can use ' or " for strings, but be consistent unless you need to enclose one value inside the other, e.g. change to double-quotes in order to write s = "'"
+- This is a very solid project, good job
+"""
 
 path = os.getcwd()
 
@@ -148,7 +154,7 @@ StateTech16 = cleanStateTech16(StateTech16)
 
 def cleanStateTech(StateDT):
     # Cite the dictionary from 'https://gist.github.com/rogerallen/1583593'
-    # Call this function to transform the state names to state abbreviations for later merge
+    # Call this function to transform the state names to state abbreviations for later merge #JL: we've used the us library repeatedly; you could have just done this in two lines
     us_state_abbrev = {
         'Alabama': 'AL',
         'Alaska': 'AK',
@@ -458,7 +464,7 @@ Merge16 = Merge[1]
 
 
 def splitMerge(Merge1, Merge2):
-    global X_train
+    global X_train #JL: don't use globals, use arguments explicitly passed out of the function
     global Y_train
     global X_test
     global Y_test
